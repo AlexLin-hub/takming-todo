@@ -23,7 +23,12 @@
           />
           <button v-if="!isEditing" type="button" @click="onAdd">新增</button
           ><button v-if="isEditing" type="button" @click="onSave">儲存</button
-          ><button v-if="false" type="button" class="!bg-transparent">
+          ><button
+            v-if="isEditing"
+            type="button"
+            class="!bg-transparent"
+            @click="onCancel"
+          >
             取消
           </button>
         </div>
@@ -37,7 +42,13 @@
               </div>
               <div class="todo-item-actions material-symbols-outlined">
                 <button type="button" @click="onEdit(todo,idx)">edit</button
-                ><button class="text-green-800" type="button">check</button>
+                ><button
+                  class="text-green-800"
+                  type="button"
+                  @click="onFinished(todo,idx)"
+                >
+                  check
+                </button>
               </div>
             </li>
           </ul>
@@ -69,15 +80,27 @@
         function onEdit(todo, idx) {
           text.value = todo;
           editIndex.value = idx;
-          console.log(todo, idx);
         }
 
         function onSave() {
           if (editIndex.value === null) return;
           todos.value[editIndex.value] = text.value;
+          clearEdit();
+        }
+
+        function onCancel() {
+          clearEdit();
+        }
+
+        function onFinished(todo, idx) {
+          const isConfirm = confirm(`你確定已經完成：${todo}？`);
+          if (!isConfirm) return;
+          todos.value.splice(idx, 1);
+        }
+
+        function clearEdit() {
           text.value = "";
           editIndex.value = null;
-          console.log("save");
         }
 
         return {
@@ -88,6 +111,8 @@
           onAdd,
           onEdit,
           onSave,
+          onCancel,
+          onFinished,
         };
       },
     }).mount("#app");
