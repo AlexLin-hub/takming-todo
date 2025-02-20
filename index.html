@@ -21,7 +21,13 @@
             maxlength="30"
             placeholder="請輸入"
           />
-          <button v-if="!isEditing" type="button" @click="onAdd">新增</button
+          <button
+            v-if="!isEditing"
+            type="button"
+            :disabled="isMax"
+            @click="onAdd"
+          >
+            新增</button
           ><button v-if="isEditing" type="button" @click="onSave">儲存</button
           ><button
             v-if="isEditing"
@@ -71,6 +77,7 @@
         const editIndex = ref(null);
 
         const isEditing = computed(() => editIndex.value !== null);
+        const isMax = computed(() => todos.value.length >= 5);
 
         function onAdd() {
           todos.value.push(text.value);
@@ -83,7 +90,7 @@
         }
 
         function onSave() {
-          if (editIndex.value === null) return;
+          if (!isEditing.value) return;
           todos.value[editIndex.value] = text.value;
           clearEdit();
         }
@@ -108,6 +115,7 @@
           todos,
           editIndex,
           isEditing,
+          isMax,
           onAdd,
           onEdit,
           onSave,
